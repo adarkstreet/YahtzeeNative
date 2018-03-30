@@ -1,8 +1,65 @@
 import React from 'react';
-import { Text } from'react-native';
+import { Text, StyleSheet } from'react-native';
+import { Form, Item, Label, Input, Button } from 'native-base';
+import { Link } from 'react-router-native';
+import { connect } from 'react-redux';
+import { authLogin } from '../actions/auth';
 
-const Login = () => {
-  <Text>Login</Text>
+class Login extends React.Component {
+  state= { email: '', password: '' }
+
+  authenticate = () => {
+    let { email, password } = this.state;
+    let { dispatch, history } = this.props;
+    dispatch(authLogin(email, password, history));
+  }
+
+  handleChange = (type, val) => {
+    this.setState({ [type]: val});
+  }
+
+  render () {
+    let { email, password } = this.state;
+    return(
+      <Form>
+        <Item floatingLabel>
+          <Label>Email</Label>
+          <Input
+            autoFocus= {true}
+            autoCapitalize= "none"
+            autoCorrect= {false}
+            onChangeText={ (val) => this.handleChange('email', val)}
+          />
+        </Item>
+        <Item floatingLabel last>
+          <Label>Password</Label>
+          <Input
+            autoCapitalize= "none"
+            autoCorrect= {false}
+            onChangeText={ (val) => this.handleChange('password', val)}
+          />
+        </Item>
+        { (email.length > 0 && password.length > 0 ) ? 
+          <Button primary block onPress={this.authenticate}>
+            <Text style={styles.button}>Login</Text>
+          </Button> : null
+        }
+        <Link to='./register'>
+          <Text style={styles.link}>New User</Text>
+        </Link>
+      </Form>
+    )
+  }
 }
 
-export default Login;
+const styles = StyleSheet.create({
+  button: {
+    color: 'white',
+  },
+  link: {
+    textAlign: 'center',
+    paddingTop: 40,
+  },
+})
+
+export default connect()(Login);
